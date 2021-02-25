@@ -1,0 +1,25 @@
+package main
+
+import (
+	"fmt"
+	"sync"
+)
+
+func main() {
+	wg := &sync.WaitGroup{}
+	ch := make(chan int) // buffered channel make(chan int, 1)
+
+	wg.Add(2)
+
+	go func(ch chan int, wg *sync.WaitGroup) {
+		fmt.Println(<-ch) // receive a message from channel.
+		wg.Done()
+	}(ch, wg)
+
+	go func(ch chan int, wg *sync.WaitGroup) {
+		ch <- 42 // send message to the channel.
+		wg.Done()
+	}(ch, wg)
+
+	wg.Wait()
+}
